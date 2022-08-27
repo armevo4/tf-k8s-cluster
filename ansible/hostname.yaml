@@ -1,0 +1,64 @@
+---
+# Configuring hostnames
+- hosts: "master01"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: "Configure hostname"
+      ansible.builtin.hostname:
+        name: "master01"
+      become: true
+
+- hosts: "worker01"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: "Configure hostname"
+      ansible.builtin.hostname:
+        name: "worker01"
+      become: true
+
+- hosts: "worker02"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: "Configure hostname"
+      ansible.builtin.hostname:
+        name: "worker02"
+      become: true
+
+# editing /etc/hosts
+- hosts: "all_hosts"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: line 1
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 192.168.2.171 master01
+        create: yes
+
+- hosts: "all_hosts"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: line 2
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 192.168.2.224 worker01
+        create: yes
+- hosts: "all_hosts"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: line 3
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 192.168.2.22 worker02
+        create: yes        
