@@ -1,0 +1,17 @@
+# with terraform 
+1. Need to create network on AWS 
+     vpc , IGW , attach both , pub subnet , RT , edit RT target igw , SG , link RT to subnet 
+2. 3 EC2 ubuntu 2 core, 4 ram 8gb
+3. Name EC2 instances 
+4. Output their internal and public IP and put them in variable for later use 
+5. We need to create 3 different script so each of them will run on each specific EC2
+	1. One script should run with default commands , with kubeadm init and stuff and somehow get the last "join" command and paste it to worker nodes
+	2. One should run on worker 1 & 2  with default command and with "join" command
+	3. One should run on local machine with only "scp" , install CNI and k9s  
+6. Before that we need somehow to pass the IPs to those script files so they can run properly , maybe get the value ,echo it in a local file or put in a variable with local exec and pass it in those scripts 
+
+
+
+
+Start using from you local machine 
+OR run a 4th EC2 with public access , master and workers will be in private , so all the local scripts will run on 4th EC2 and test it from there .

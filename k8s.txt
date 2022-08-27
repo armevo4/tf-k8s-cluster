@@ -1,0 +1,99 @@
+sudo hostnamectl set-hostname master-01
+sudo hostnamectl set-hostname worker-01
+sudo hostnamectl set-hostname worker-02
+
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+10.10.1.254     master-01
+10.10.1.172     worker-01
+10.10.0.54      worker-02
+
+
+sudo apt-get install containerd
+sudo modprobe br_netfilter
+sudo vim /etc/modules-load.d/modules.conf
+    br_netfilter
+add or uncomment in /etc/sysctl.conf
+    net.bridge.bridge-nf-call-iptables = 1
+    net.ipv4.ip_forward = 1
+
+sudo sysctl -p /etc/sysctl.conf
+
+
+# Run on Master Node
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+# Run on Worker Nodes
+sudo kubeadm join 10.10.1.254:6443 --token kl0odu.dpshzd7v824xqwzg \
+	--discovery-token-ca-cert-hash sha256:78b9c07a8026248a2fb8700d4df6904dfbbac4ba4f4ff0db23e51ef255309319
+
+sudo cp /etc/kubernetes/admin.conf ~/
+sudo chown ubuntu:ubuntu ~/admin.conf
+export KUBECONFIG=$HOME/admin.conf
+kubectl get nodes
+
+# On your Laptop
+mkdir ~/.kube
+scp ubuntu@18.195.64.79:admin.conf .kube/config
+chmod 600 ~/.kube/config
+
+# Change this 
+server: https://10.10.1.254:6443
+# To Master Public IP
+server: https://18.195.64.79:6443
+
+alias kubectl="kubectl --insecure-skip-tls-verify"
+# Installing Flannel CNI
+kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+
+
+
+
+
+# working with k8s from jumphost
+kubectl apply -f hostname-deployment.yml
+kubectl get deploy
+kubectl get pods
+kubectl describe deploy hostname-deploy
+kubectl apply -f random-deployment.yml
+kubectl get deploy
+kubectl get pods
+kubectl describe deploy random-deploy
+
+kubectl apply -f hostname-svc.yml
+kubectl get svc
+kubectl describe svc hostname-svc
+kubectl port-forward services/hostname-svc 8080:80
+kubectl delete svc hostname-svc
+
+kubectl apply -f hostname-svc-np.yml
+kubectl get svc
+
+# Install NGINX ingress controller
+https://kubernetes.github.io/ingress-nginx/deploy/
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml 
+
+# Install HELM
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+sudo apt-get install apt-transport-https --yes
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+
+# Install NGINX ingress controller via HELM
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+
+
+
+# if needed to use master node also for pods and stuff
+kubectl taint nodes  mildevkub020 node-role.kubernetes.io/master-
+OR it depend on the " kubectl get nodes " get the info from there 
+kubectl taint nodes  mildevkub020 node-role.kubernetes.io/control-plane-

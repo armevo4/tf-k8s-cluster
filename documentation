@@ -1,0 +1,85 @@
+# How to setup K8s cluster using kubeadm
+--------------------------------------------
+#webpages that we will need 
+https://docs.docker.com/engine/install/ubuntu/
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+https://github.com/flannel-io/flannel
+------------------------------------------------------------------------------------
+1. NOTE : swap must be turned of so the k8s will work 
+          By default on EC2 ubuntu swap is turned of
+ 
+2. In this example we will have 3 EC2 instance - 1 master node - 2 worker nodes 
+
+3. We will create in AWS 
+	1. VPC 
+	2. Internet Gateway
+	3. Attach IGW to VPC
+	4. Subnet public 
+	5. Route table 
+	5. Edit route "target"  igw
+	6. Security Group
+	7. assosiate RT to subnet 
+	8. Create 3 EC2 instances "ubuntu 20.04" - 2 core ,2 ram, 8gb, (Minimum)
+	9. Name EC2 instances master-01 ,worker-02 ,worker-03
+
+4. SSH into 3 of EC2       "ssh ubuntu@x.x.x.x"
+    NOTE: These steps can be done 1.by userdata on creation 
+				  2.by script
+ 
+	1. Change hostname                            - sudo hostnamectl set-hostname worker-01
+	2. Edit hosts and add 3 EC2 IPs and hostnames - sudo vim /etc/hosts
+								X.X.X.X master-01
+								Y.Y.Y.Y worker-01
+								Z.Z.Z.Z worker-02
+	3. we are going to install neccesary things   - sudo apt-get update 
+            					      - sudo apt-get install -y apt-transport-https ca-certificates curl
+						      - sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+						      - echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+						      - sudo apt-get update
+						      - sudo apt-get install -y kubelet kubeadm kubectl
+						      - sudo apt-mark hold kubelet kubeadm kubectl
+						      - sudo apt-get install containerd
+						      - sudo modprobe br_netfilter
+						      - #add or uncomment in /etc/sysctl.conf
+                                                                  # net.bridge.bridge-nf-call-iptables = 1
+   								  # net.ipv4.ip_forward = 1
+						      - sudo sysctl -p /etc/sysctl.conf
+
+	4. Now on master node (IP is his public) : NOTE: we can use $sudo kubeadm init   it will use local IP or the below command for public IP
+             						 But it is recommended	to have all K8s cluster with private and have 1 EC2 with public and connecting that EC2 to connect to and work on Cluster 
+						      - sudo kubeadm init --pod-network-cidr=10.244.0.0/16           # we can connect to our master node from a jump EC2 with alias insecure tls
+						      - sudo cp /etc/kubernetes/admin.conf ~/ 
+						      - sudo chown ubuntu:ubuntu admin.conf
+						      - 
+
+        NOTE: after init , it will return a link with join copy and paste and run that command on worker nodes (this below is an example)
+	5. On worker nodes       		      - kubeadm join 172.31.42.154:6443 --token z7uuhl.disz2hnsl15q5qc0 --discovery-token-ca-cert-hash sha256:8f24eefbb5177b568ebddded6365c0bd1427e82dba5367149d2057c2dea3ffc1
+
+	6. From your PC or from the only public EC2 instance that you want to control the cluster
+						      - scp ubuntu@X.X.X.X:admin.conf ./.kube/config   # make sure you edit and add the IP 
+						      - kubectl cluster-info
+						      - kubectl get nodes      #NOTE: this will be not ready because to install CNI it is like the internal network for k8s cluster 
+           									      there are like flannel , calico and other 
+						      - kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml       #when needed we can "delete "
+						      - kubectl api-resources	       # this will show all the shortcuts of the commands 
+						      # NOTE there is "k9s" we can install ,that it is a utility that you can use for controlling cluster with graphic 
+
+
+
+
+
+NOTE: we can edit the config file and change the real IP of the master node and after that to connect to the it with kubectl we can use 
+      alias k="kubectl --insecure-skip-tls-verify"
+K exec -n devops3 -it devops3-nginx -c redid-container --bash     # if we have in the pod 2 containers with -c we select to which we connect with exec -it 
+
+
+kubectl port-forward hostname-deploy-7f54b9d7d-229x4 8080:3000
+kubectl port-forward service/hostname-svc 8080:80
+
+
+
+
+
+
+
+
