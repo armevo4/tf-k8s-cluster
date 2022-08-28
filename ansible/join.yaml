@@ -1,0 +1,10 @@
+---
+- hosts: worker
+  remote_user: ubuntu
+  become: yes
+  tasks:
+     - name: Transfer the script
+       copy: src=total.txt dest=/home/ubuntu/ mode=0777
+
+     - name: Execute the script
+       command: sh /home/ubuntu/total.txt

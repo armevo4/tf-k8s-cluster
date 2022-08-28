@@ -40,7 +40,14 @@ resource "aws_instance" "data-ec2-jumphost" {
       "sudo apt install software-properties-common",
       "sudo add-apt-repository --yes --update ppa:ansible/ansible",
       "sudo apt install ansible -y",
-
+      "sleep 2",
+      "sudo apt-get update -y",
+      "sudo apt-get install -y apt-transport-https ca-certificates curl",
+      "sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg",
+      "echo 'deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main' | sudo tee /etc/apt/sources.list.d/kubernetes.list",
+      "sudo apt-get update -y",
+      "sudo apt-get install -y kubectl",
+      "sudo apt-mark hold kubectl",
     ]
   }
   provisioner "file" {
@@ -78,13 +85,19 @@ resource "aws_instance" "data-ec2-jumphost" {
   }    
 
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-worker-join.sh"
-    destination = "/home/ubuntu/ansible/script-worker-join.sh"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-jumper.sh"
+    destination = "/home/ubuntu/ansible/script-jumper.sh"
   } 
 
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/init-join.yaml"
-    destination = "/home/ubuntu/ansible/init-join.yaml"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/init.yaml"
+    destination = "/home/ubuntu/ansible/init.yaml"
+  } 
+
+
+provisioner "file" {
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/join.yaml"
+    destination = "/home/ubuntu/ansible/join.yaml"
   } 
 
   provisioner "remote-exec" {
@@ -92,6 +105,7 @@ resource "aws_instance" "data-ec2-jumphost" {
         "cd /home/ubuntu/ansible/",
         "chmod 760 add-ansible-hosts.sh",
         "sudo ./add-ansible-hosts.sh", 
+        "chmod 760 script-jumper.sh"
     ]
   }
 

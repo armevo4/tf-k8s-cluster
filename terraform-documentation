@@ -6,4 +6,6 @@
 # edit the ips of hostname.yaml
 # run ansible-playbook hostname.yaml
 # run ansible-playbook script-transfer-run.yaml
-# run ansible-playbook init-join.yaml
+# run ansible-playbook init.yaml
+# run ansible-playbook join.yaml
+# run ansible-playbook script-jumper.sh

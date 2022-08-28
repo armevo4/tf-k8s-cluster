@@ -1,1 +1,0 @@
-hele vor es petq chi , hima porcumem ansible ov anem 
