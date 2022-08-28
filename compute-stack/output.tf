@@ -10,6 +10,10 @@ output "ec2_pub_ip" {
   value = aws_instance.data-ec2-jumphost.public_ip
 }
 
+output "ec2_private_ip" {
+  value = aws_instance.data-ec2-jumphost.private_ip
+}
+
 output "ec2_private_ip-m01" {
   value = aws_instance.data-ec2-m01.private_ip
 }

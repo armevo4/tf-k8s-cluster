@@ -52,6 +52,7 @@
         path: /etc/hosts
         line: 192.168.2.224 worker01
         create: yes
+
 - hosts: "all_hosts"
   remote_user: ubuntu
   become: yes
@@ -61,4 +62,39 @@
       ansible.builtin.lineinfile:
         path: /etc/hosts
         line: 192.168.2.22 worker02
-        create: yes        
+        create: yes
+
+
+# editing /etc/hosts on localhost
+- hosts: "localhost"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: line 1
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 192.168.2.171 master01
+        create: yes
+
+- hosts: "localhost"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: line 2
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 192.168.2.224 worker01
+        create: yes
+
+- hosts: "localhost"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: line 3
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 192.168.2.197 worker02
+        create: yes

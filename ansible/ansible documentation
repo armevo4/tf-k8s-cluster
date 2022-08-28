@@ -6,3 +6,20 @@ sudo apt install ansible -y
 
 vim /etc/ansible/hosts # edit all_hosts
 ansible-playbook playbook.yaml -vvv
+
+
+[all-hosts]
+worker01 ansible_host=192.168.2.106
+worker02 ansible_host=192.168.2.197
+master01 ansible_host=192.168.2.130
+
+[localhost]
+127.0.0.1
+
+[worker]
+worker01 ansible_host=192.168.2.106
+worker02 ansible_host=192.168.2.197
+
+[master]
+master01 ansible_host=192.168.2.130
+

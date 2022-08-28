@@ -25,6 +25,11 @@ output "pub_id" {
 output "jumphost-pub-ip"{
   value = module.compute-stack.ec2_pub_ip
 }
+
+output "jumphost-private-ip"{
+  value = module.compute-stack.ec2_private_ip
+}
+
 output "ec2_private_ip-m01" {
   value = module.compute-stack.ec2_private_ip-m01
 }

@@ -53,8 +53,8 @@ resource "aws_instance" "data-ec2-jumphost" {
   }
 
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/playbook.yaml"
-    destination = "/home/ubuntu/playbook.yaml"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/script-transfer-run.yaml"
+    destination = "/home/ubuntu/script-transfer-run.yaml"
   }
 
   provisioner "file" {
@@ -65,6 +65,22 @@ resource "aws_instance" "data-ec2-jumphost" {
     source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-worker.sh"
     destination = "/home/ubuntu/script-worker.sh"
   }  
+
+  provisioner "remote-exec" {
+    inline = [
+        "sudo echo -e "[all-hosts]" >> /etc/ansible/hosts"
+        "sudo echo -e "worker01 ansible_host=192.168.2.106" >> /etc/ansible/hosts"
+        "sudo echo -e "worker02 ansible_host=192.168.2.197" >> /etc/ansible/hosts"
+        "sudo echo -e "master01 ansible_host=192.168.2.130" >> /etc/ansible/hosts"
+        "sudo echo -e "[localhost]" >> /etc/ansible/hosts"
+        "sudo echo -e "127.0.0.1" >> /etc/ansible/hosts"
+        "sudo echo -e "[worker]" >> /etc/ansible/hosts"
+        "sudo echo -e "worker01 ansible_host=192.168.2.106" >> /etc/ansible/hosts"
+        "sudo echo -e "worker02 ansible_host=192.168.2.197" >> /etc/ansible/hosts"
+        "sudo echo -e "[master]" >> /etc/ansible/hosts"
+        "sudo echo -e "master01 ansible_host=192.168.2.130" >> /etc/ansible/hosts"
+    ]
+  }
 
   tags = {
     Name ="${var.env_prefix}-EC2-jumphost"
