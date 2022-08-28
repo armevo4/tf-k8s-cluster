@@ -24,7 +24,9 @@ worker02 ansible_host=192.168.2.197
 master01 ansible_host=192.168.2.130
 
 #these command is for automating init and join part
+cd ~
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 >> testing.txt
 cat testing.txt | tail -n 2 >> total.txt
-scp
-file1=$(cat "testing.txt")
+scp ./total.txt ubuntu@jumphost-01:~
+
+    #file1=$(cat "testing.txt")

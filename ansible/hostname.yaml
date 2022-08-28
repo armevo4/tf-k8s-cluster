@@ -2,7 +2,7 @@
 # add key to be able to conenct internally 
 - hosts: all-hosts
   remote_user: ubuntu
-  become: yes
+  #become: yes
   tasks:
      - name: Transfer the script
        copy: src=/home/ubuntu/.ssh/id_rsa dest=/home/ubuntu/.ssh/ mode=0400
@@ -39,7 +39,7 @@
       become: true
 
 # editing /etc/hosts
-- hosts: "all_hosts"
+- hosts: "all-hosts"
   remote_user: ubuntu
   become: yes
   tasks:
@@ -50,7 +50,7 @@
         line: 192.168.2.171 master01
         create: yes
 
-- hosts: "all_hosts"
+- hosts: "all-hosts"
   remote_user: ubuntu
   become: yes
   tasks:
@@ -61,7 +61,7 @@
         line: 192.168.2.224 worker01
         create: yes
 
-- hosts: "all_hosts"
+- hosts: "all-hosts"
   remote_user: ubuntu
   become: yes
   tasks:
@@ -72,6 +72,16 @@
         line: 192.168.2.22 worker02
         create: yes
 
+- hosts: "all-hosts"
+  remote_user: ubuntu
+  become: yes
+  tasks:
+
+    - name: line 4
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 192.168.1.142 jumphost-01
+        create: yes
 
 # editing /etc/hosts on localhost
 - hosts: "localhost"

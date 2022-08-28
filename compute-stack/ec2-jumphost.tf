@@ -70,7 +70,22 @@ resource "aws_instance" "data-ec2-jumphost" {
   provisioner "file" {
     source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/add-ansible-hosts.sh"
     destination = "/home/ubuntu/ansible/add-ansible-hosts.sh"
-  }   
+  }
+
+  provisioner "file" {
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-master-init.sh"
+    destination = "/home/ubuntu/ansible/script-master-init.sh"
+  }    
+
+  provisioner "file" {
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-worker-join.sh"
+    destination = "/home/ubuntu/ansible/script-worker-join.sh"
+  } 
+
+  provisioner "file" {
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/init-join.yaml"
+    destination = "/home/ubuntu/ansible/init-join.yaml"
+  } 
 
   provisioner "remote-exec" {
     inline = [
