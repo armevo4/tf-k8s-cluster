@@ -1,4 +1,12 @@
 ---
+# add key to be able to conenct internally 
+- hosts: all-hosts
+  remote_user: ubuntu
+  become: yes
+  tasks:
+     - name: Transfer the script
+       copy: src=/home/ubuntu/.ssh/id_rsa dest=/home/ubuntu/.ssh/ mode=0400
+
 # Configuring hostnames
 - hosts: "master01"
   remote_user: ubuntu

@@ -4,17 +4,17 @@
   become: yes
   tasks:
      - name: Transfer the script
-       copy: src=script-worker.sh dest=/home/ubuntu mode=0777
+       copy: src=script-k8s-all.sh dest=/home/ubuntu/ansible/ mode=0777
 
      - name: Execute the script
-       command: sh /home/ubuntu/script-worker.sh
+       command: sh /home/ubuntu/ansible/script-k8s-all.sh
 
 - hosts: master
   remote_user: ubuntu
   become: yes
   tasks:
      - name: Transfer the script
-       copy: src=script-master.sh dest=/home/ubuntu mode=0777
+       copy: src=script-master.sh dest=/home/ubuntu/ansible/ mode=0777
 
      - name: Execute the script
-       command: sh /home/ubuntu/script-master.sh
+       command: sh /home/ubuntu/ansible/script-master.sh

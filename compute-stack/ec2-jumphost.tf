@@ -26,6 +26,7 @@ resource "aws_instance" "data-ec2-jumphost" {
 
   provisioner "remote-exec" {
     inline = [
+      "mkdir ansible",
       "sudo apt-get install -y nginx",
       "sudo systemctl start nginx",
       "sudo systemctl enable nginx",
@@ -49,37 +50,33 @@ resource "aws_instance" "data-ec2-jumphost" {
 
   provisioner "file" {
     source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/hostname.yaml"
-    destination = "/home/ubuntu/hostname.yaml"
+    destination = "/home/ubuntu/ansible/hostname.yaml"
   }
 
   provisioner "file" {
     source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/ansible/script-transfer-run.yaml"
-    destination = "/home/ubuntu/script-transfer-run.yaml"
+    destination = "/home/ubuntu/ansible/script-transfer-run.yaml"
   }
 
   provisioner "file" {
     source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-master.sh"
-    destination = "/home/ubuntu/script-master.sh"
+    destination = "/home/ubuntu/ansible/script-master.sh"
   }
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-worker.sh"
-    destination = "/home/ubuntu/script-worker.sh"
-  }  
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-k8s-all.sh"
+    destination = "/home/ubuntu/ansible/script-k8s-all.sh"
+  } 
+
+  provisioner "file" {
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/add-ansible-hosts.sh"
+    destination = "/home/ubuntu/ansible/add-ansible-hosts.sh"
+  }   
 
   provisioner "remote-exec" {
     inline = [
-        "sudo sleep 2", 
-        "sudo echo -e '[all-hosts]' >> /etc/ansible/hosts",
-        "sudo echo -e 'worker01 ansible_host=192.168.2.106' >> /etc/ansible/hosts",
-        "sudo echo -e 'worker02 ansible_host=192.168.2.197' >> /etc/ansible/hosts",
-        "sudo echo -e 'master01 ansible_host=192.168.2.130' >> /etc/ansible/hosts",
-        "sudo echo -e '[localhost]' >> /etc/ansible/hosts",
-        "sudo echo -e '127.0.0.1' >> /etc/ansible/hosts",
-        "sudo echo -e '[worker]' >> /etc/ansible/hosts",
-        "sudo echo -e 'worker01 ansible_host=192.168.2.106' >> /etc/ansible/hosts",
-        "sudo echo -e 'worker02 ansible_host=192.168.2.197' >> /etc/ansible/hosts",
-        "sudo echo -e '[master]' >> /etc/ansible/hosts",
-        "sudo echo -e 'master01 ansible_host=192.168.2.130' >> /etc/ansible/hosts",
+        "cd /home/ubuntu/ansible/",
+        "chmod 760 add-ansible-hosts.sh",
+        "sudo ./add-ansible-hosts.sh", 
     ]
   }
 
