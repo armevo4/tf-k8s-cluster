@@ -1,4 +1,5 @@
 ---
+# install on all-hosts kubectl kubelet kubeadm
 - hosts: all-hosts
   remote_user: ubuntu
   become: yes

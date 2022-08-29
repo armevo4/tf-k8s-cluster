@@ -1,4 +1,5 @@
 ---
+# join the workers
 - hosts: worker
   remote_user: ubuntu
   become: yes

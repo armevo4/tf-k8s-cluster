@@ -12,7 +12,6 @@ resource "aws_instance" "data-ec2-jumphost" {
     host        = self.public_ip
   }
 
- 
  provisioner "file" {
     source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/main/id_rsa.pub"
     destination = "/home/ubuntu/.ssh/id_rsa.pub"
@@ -66,26 +65,26 @@ resource "aws_instance" "data-ec2-jumphost" {
   }
 
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-master.sh"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/scripts/script-master.sh"
     destination = "/home/ubuntu/ansible/script-master.sh"
   }
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-k8s-all.sh"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/scripts/script-k8s-all.sh"
     destination = "/home/ubuntu/ansible/script-k8s-all.sh"
   } 
 
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/add-ansible-hosts.sh"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/scripts/add-ansible-hosts.sh"
     destination = "/home/ubuntu/ansible/add-ansible-hosts.sh"
   }
 
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-master-init.sh"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/scripts/script-master-init.sh"
     destination = "/home/ubuntu/ansible/script-master-init.sh"
   }    
 
   provisioner "file" {
-    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/script-jumper.sh"
+    source      = "/Users/krikorgarabedkafalian/Desktop/tf-k8s-cluster/scripts/script-jumper.sh"
     destination = "/home/ubuntu/ansible/script-jumper.sh"
   } 
 

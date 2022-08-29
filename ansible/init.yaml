@@ -1,4 +1,5 @@
 ---
+# init master and stuff
 - hosts: master
   remote_user: ubuntu
   tasks:
